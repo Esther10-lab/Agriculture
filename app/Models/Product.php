@@ -27,6 +27,12 @@ class Product extends Model
 
     public function farmer()
     {
-        return $this->belongsTo(User::class, 'farmer_id');
+        return $this->belongsTo(User::class, 'id');
     }
+    // App\Models\Product.php
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class);
+    }
+
 }
