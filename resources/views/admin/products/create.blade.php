@@ -7,23 +7,24 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="h3 mb-0 text-gray-800">Créer un produit</h1>
-                <nav aria-label="breadcrumb">
+                {{-- <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Tableau de bord</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('admin.products.index') }}">Produits</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Créer</li>
                     </ol>
-                </nav>
+                </nav> --}}
             </div>
             <div>
-                <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">
+                <a href="{{ Auth()->user()->role=='admin' ? route('admin.products.index') : route('farmer.products.index') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Retour
                 </a>
             </div>
         </div>
 
-        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ Auth()->user()->role=='admin' ? route('admin.products.store') : route('farmer.products.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" name="user_id" value="{{ Auth()->user()->id }}">
             <div class="row">
                 @foreach (['success', 'info', 'warning', 'danger'] as $msg)
                     @if (session($msg))

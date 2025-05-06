@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
-@section('title', 'Modifier l\'Agriculteur')
+@section('title', 'Modifier Producteur')
 
 @section('content')
     <div class="container-fluid px-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Modifier l'Agriculteur</h1>
+            <h1 class="h3 mb-0 text-gray-800">Modifier Producteur</h1>
             <a href="{{ route('admin.farmers.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Retour
             </a>
@@ -117,8 +117,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-6">
+                                    {{-- <div class="row">
+                                        <div class="col-md-6"> --}}
                                             <div class="mb-3">
                                                 <label for="city" class="form-label">Ville</label>
                                                 <div class="input-group">
@@ -132,7 +132,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                        </div>
+                                         {{--</div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="postal_code" class="form-label">Code postal</label>
@@ -147,10 +147,10 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </div> 
+                                    </div>--}}
 
-                                    <div class="mb-3">
+                                    {{-- <div class="mb-3">
                                         <label for="country" class="form-label">Pays</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light">
@@ -162,7 +162,7 @@
                                                         <div class="invalid-feedback">{{ $message }}</div>
                                                     @enderror
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                     <div class="row">
                                         <div class="col-md-6">

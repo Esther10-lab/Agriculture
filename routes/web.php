@@ -25,6 +25,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrdersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,7 +109,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/products/{product}', [ProductControllers::class, 'update'])->name('admin.products.update');
         Route::delete('/products/{product}', [ProductControllers::class, 'destroy'])->name('admin.products.destroy');
 
-        // Agriculteurs
+        // Producteur
         Route::get('/farmers', [FarmerController::class, 'index'])->name('admin.farmers.index');
         Route::get('/farmers/create', [FarmerController::class, 'create'])->name('admin.farmers.create');
         Route::post('/farmers', [FarmerController::class, 'store'])->name('admin.farmers.store');
@@ -151,25 +152,25 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Espace Agriculteur
+    | Espace Producteur
     |--------------------------------------------------------------------------
     */
     Route::prefix('farmer')->middleware('farmer')->group(function () {
-        // Produits de l'agriculteur
+        // Produits de producteur
         Route::get('/products', [ProductControllers::class, 'index'])->name('farmer.products.index');
-        Route::get('/products/create', [ProductController::class, 'create'])->name('farmer.products.create');
-        Route::post('/products', [ProductController::class, 'store'])->name('farmer.products.store');
-        Route::get('/products/{product}', [ProductController::class, 'show'])->name('farmer.products.show');
-        Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('farmer.products.edit');
-        Route::put('/products/{product}', [ProductController::class, 'update'])->name('farmer.products.update');
-        Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('farmer.products.destroy');
+        Route::get('/products/create', [ProductControllers::class, 'create'])->name('farmer.products.create');
+        Route::post('/products', [ProductControllers::class, 'store'])->name('farmer.products.store');
+        Route::get('/products/{product}', [ProductControllers::class, 'show'])->name('farmer.products.show');
+        Route::get('/products/{product}/edit', [ProductControllers::class, 'edit'])->name('farmer.products.edit');
+        Route::put('/products/{product}', [ProductControllers::class, 'update'])->name('farmer.products.update');
+        Route::delete('/products/{product}', [ProductControllers::class, 'destroy'])->name('farmer.products.destroy');
 
-        // Commandes de l'agriculteur
+        // Commandes de producteur
         Route::get('/orders', [OrderController::class, 'index'])->name('farmer.orders.index');
         Route::get('/orders/{order}', [OrderController::class, 'show'])->name('farmer.orders.show');
         Route::put('/orders/{order}', [OrderController::class, 'update'])->name('farmer.orders.update');
 
-        // Profil de l'agriculteur
+        // Profil de producteur
         Route::get('/profile', [FarmerController::class, 'show'])->name('farmer.profile');
         Route::put('/profile', [FarmerController::class, 'update'])->name('farmer.profile.update');
     });
@@ -191,7 +192,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Routes pour les produits
     Route::resource('products', ProductControllers::class);
 
-    // Routes pour les agriculteurs
+    // Routes pour les producteurs
     Route::resource('farmers', FarmerController::class);
 
     // Routes pour les catégories
@@ -201,15 +202,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('orders', OrderController::class);
 
     // Routes pour les utilisateurs
-    Route::resource('users', UserController::class)->names([
-        'index' => 'users.index',
-        'create' => 'users.create',
-        'store' => 'users.store',
-        'show' => 'users.show',
-        'edit' => 'users.edit',
-        'update' => 'users.update',
-        'destroy' => 'users.destroy'
-    ]);
+    Route::resource('users', UserController::class);
 
     // Routes pour le profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -233,8 +226,12 @@ Route::middleware(['auth', 'farmer'])->prefix('farmer')->name('farmer.')->group(
 
     // Commandes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
     Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
     // Profil
     Route::get('/profile', [FarmerController::class, 'show'])->name('profile');
@@ -243,13 +240,10 @@ Route::middleware(['auth', 'farmer'])->prefix('farmer')->name('farmer.')->group(
 
 // Routes pour les commandes
 Route::middleware('auth')->group(function () {
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
-    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
-    Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
-    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+     // Commandes
+    Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrdersController::class, 'show'])->name('orders.show');
+    Route::put('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update');
 
     // Routes de commande
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');

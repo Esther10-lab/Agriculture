@@ -1,82 +1,85 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Détails de la Commande - AgriCarte')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-800">Détails de la Commande #{{ $order->id }}</h1>
-        <div class="flex space-x-4">
-            <a href="{{ route('orders.edit', $order) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-                Modifier
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 fw-bold text-dark">Commande #{{ $order->id }}</h1>
+        <div>
+            <a href="{{ Auth()->user()->role=='admin' ? route('admin.orders.edit',$order->id) : route('farmer.orders.edit',$order->id) }}" class="btn btn-primary me-2">
+                <i class="bi bi-pencil-square me-1"></i> Modifier
             </a>
-            <a href="{{ route('orders.index') }}" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition">
-                Retour
+            <a href="{{ Auth()->user()->role=='admin' ? route('admin.orders.index') : route('farmer.orders.index') }}" class="btn btn-secondary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span class="text">Retour</span>
             </a>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Informations de la commande -->
-        <div class="md:col-span-2">
-            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Informations de la commande</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Date de commande</p>
-                        <p class="font-medium">{{ $order->created_at->format('d/m/Y H:i') }}</p>
+    <div class="row g-4">
+        <!-- Infos commande -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white fw-semibold fs-5">Informations de la commande</div>
+                <div class="card-body row g-3">
+                    <div class="col-md-6">
+                        <small class="text-muted">Date de commande</small>
+                        <p class="mb-0">{{ $order->created_at->format('d/m/Y H:i') }}</p>
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Statut</p>
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                            @if($order->status == 'pending') bg-yellow-100 text-yellow-800
-                            @elseif($order->status == 'processing') bg-blue-100 text-blue-800
-                            @elseif($order->status == 'shipped') bg-indigo-100 text-indigo-800
-                            @elseif($order->status == 'delivered') bg-green-100 text-green-800
-                            @else bg-red-100 text-red-800 @endif">
-                            {{ ucfirst($order->status) }}
-                        </span>
+                    <div class="col-md-6">
+                        <small class="text-muted">Statut</small>
+                        <div>
+                            @php
+                                $statusClasses = [
+                                    'pending' => 'bg-warning text-dark',
+                                    'processing' => 'bg-primary',
+                                    'shipped' => 'bg-info text-dark',
+                                    'delivered' => 'bg-success',
+                                    'cancelled' => 'bg-danger',
+                                ];
+                            @endphp
+                            <span class="badge {{ $statusClasses[$order->status] ?? 'bg-secondary' }}">
+                                {{ ucfirst($order->status) }}
+                            </span>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Méthode de paiement</p>
-                        <p class="font-medium">{{ ucfirst($order->payment_method) }}</p>
+                    <div class="col-md-6">
+                        <small class="text-muted">Méthode de paiement</small>
+                        <p class="mb-0">{{ ucfirst($order->payment_method) }}</p>
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Montant total</p>
-                        <p class="font-medium text-lg">{{ number_format($order->total_amount, 2) }} FCFA</p>
+                    <div class="col-md-6">
+                        <small class="text-muted">Montant total</small>
+                        <p class="mb-0 fw-bold text-success fs-5">{{ number_format($order->total_amount, 2) }} FCFA</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Produits commandés -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Produits commandés</h2>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+            <!-- Produits -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-semibold fs-5">Produits commandés</div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produit</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix unitaire</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantité</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                <th>Produit</th>
+                                <th>Prix unitaire</th>
+                                <th>Quantité</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody>
                             @foreach($order->products as $product)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">{{ $product->name }}</div>
-                                        <div class="text-sm text-gray-500">{{ $product->category->name }}</div>
+                                    <td>
+                                        <div class="fw-semibold">{{ $product->name }}</div>
+                                        <small class="text-muted">{{ $product->category->name }}</small>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ number_format($product->pivot->price, 2) }} FCFA
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $product->pivot->quantity }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ number_format($product->pivot->price * $product->pivot->quantity, 2) }} FCFA
-                                    </td>
+                                    <td>{{ number_format($product->pivot->price, 2) }} FCFA</td>
+                                    <td>{{ $product->pivot->quantity }}</td>
+                                    <td class="fw-semibold">{{ number_format($product->pivot->price * $product->pivot->quantity, 2) }} FCFA</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -85,47 +88,32 @@
             </div>
         </div>
 
-        <!-- Informations du client -->
-        <div>
-            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Informations du client</h2>
-                <div class="space-y-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Nom</p>
-                        <p class="font-medium">{{ $order->user->name }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Email</p>
-                        <p class="font-medium">{{ $order->user->email }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Téléphone</p>
-                        <p class="font-medium">{{ $order->user->phone ?? 'Non renseigné' }}</p>
-                    </div>
+        <!-- Infos client -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white fw-semibold fs-5">Client</div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Nom :</strong> {{ $order->user->name }}</p>
+                    <p class="mb-2"><strong>Email :</strong> {{ $order->user->email }}</p>
+                    <p class="mb-0"><strong>Téléphone :</strong> {{ $order->user->phone ?? 'Non renseigné' }}</p>
                 </div>
             </div>
 
-            <!-- Adresses -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Adresses</h2>
-                <div class="space-y-4">
-                    <div>
-                        <p class="text-sm text-gray-600">Adresse de livraison</p>
-                        <p class="font-medium">{{ $order->shipping_address }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Adresse de facturation</p>
-                        <p class="font-medium">{{ $order->billing_address }}</p>
-                    </div>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white fw-semibold fs-5">Adresses</div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Livraison :</strong> {{ $order->shipping_address }}</p>
+                    <p class="mb-0"><strong>Facturation :</strong> {{ $order->billing_address }}</p>
                 </div>
             </div>
 
-            <!-- Notes -->
             @if($order->notes)
-                <div class="bg-white rounded-lg shadow-md p-6 mt-8">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Notes</h2>
-                    <p class="text-gray-700">{{ $order->notes }}</p>
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-semibold fs-5">Notes</div>
+                <div class="card-body">
+                    <p class="text-muted fst-italic">{{ $order->notes }}</p>
                 </div>
+            </div>
             @endif
         </div>
     </div>
