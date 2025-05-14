@@ -26,7 +26,7 @@ class WelcomeEmail extends Mailable
             subject: 'Bienvenue sur AgriCarte',
         );
     }
-
+#morel
     public function content(): Content
     {
         return new Content(
